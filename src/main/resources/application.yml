@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    password:
-    url: jdbc:postgresql://localhost:5432/registration
-    username:
+    password: root
+    url: jdbc:postgresql://localhost:5432/inventory
+    username: postgres
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -18,7 +18,7 @@ spring:
     show-sql: true
 
   mail:
-    host: localhost
+    host: 127.0.0.2
     port: 1025
     username: hello
     password: hello
@@ -34,4 +34,3 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
-
