@@ -20,7 +20,7 @@ public class LoginAttemptService {
     public LoginAttemptService() {
         super();
         attemptsCache = CacheBuilder.newBuilder().
-                expireAfterWrite(1, TimeUnit.DAYS).build(new CacheLoader<>() {
+                expireAfterWrite(3, TimeUnit.MINUTES).build(new CacheLoader<>() {
                     public Integer load(String key) {
                         return 0;
                     }
@@ -40,7 +40,7 @@ public class LoginAttemptService {
             attempts = 0;
         }
         attempts++;
-        logger.error("Incorrect login attempt.");
+        logger.error("Incorrect login attempt. IP = " + key);
         logger.info("remaining number of trials " + (MAX_ATTEMPT - attempts));
         attemptsCache.put(key, attempts);
     }
