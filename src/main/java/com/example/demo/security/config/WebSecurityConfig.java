@@ -29,7 +29,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
 
-            "/api/v1/registration",
+            "/api/v1/user/register",
+            "/api/v1/user/change/password",
+            "/api/v1/user/changePassword",
+            "/api/v1/user/confirm",
 
             // -- Swagger UI v2
             "/v2/api-docs",

@@ -1,5 +1,7 @@
 package com.example.demo.appuser;
 
+import com.example.demo.registration.token.ChangePasswordToken;
+import com.example.demo.registration.token.ChangePasswordTokenService;
 import com.example.demo.registration.token.ConfirmationToken;
 import com.example.demo.registration.token.ConfirmationTokenService;
 import com.example.demo.security.LoginAttemptService;
@@ -41,7 +43,7 @@ public class AppUserService implements UserDetailsService {
 
     private String getClientIP() {
         String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null){
+        if (xfHeader == null) {
             return request.getRemoteAddr();
         }
         return xfHeader.split(",")[0];
@@ -86,4 +88,6 @@ public class AppUserService implements UserDetailsService {
     public int enableAppUser(String email) {
         return appUserRepository.enableAppUser(email);
     }
+
+
 }

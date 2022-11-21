@@ -1,74 +1,74 @@
-package com.example.demo.registration;
+package com.example.demo.registration.token;
 
 import com.example.demo.appuser.AppUser;
-import com.example.demo.appuser.AppUserRole;
-import com.example.demo.appuser.AppUserService;
+import com.example.demo.appuser.AppUserRepository;
 import com.example.demo.email.EmailSender;
-import com.example.demo.registration.token.ConfirmationToken;
-import com.example.demo.registration.token.ConfirmationTokenService;
+import com.example.demo.security.PasswordEncoder;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class RegistrationService {
+public class ChangePasswordTokenService {
+    private final static String USER_NOT_FOUND_MSG =
+            "user with email %s not found";
 
-    private final AppUserService appUserService;
-    private final EmailValidator emailValidator;
-    private final ConfirmationTokenService confirmationTokenService;
+    private final ChangePasswordTokenRepository changePasswordTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AppUserRepository appUserRepository;
     private final EmailSender emailSender;
 
-    public String register(RegistrationRequest request) {
-        boolean isValidEmail = emailValidator.
-                test(request.getEmail());
 
-        if (!isValidEmail) {
-            throw new IllegalStateException("email not valid");
-        }
 
-        String token = appUserService.signUpUser(
-                new AppUser(
-                        request.getFirstName(),
-                        request.getLastName(),
-                        request.getEmail(),
-                        request.getPassword(),
-                        AppUserRole.USER
-
-                )
-        );
-
-        String link = "http://localhost:8080/api/v1/user/confirm?token=" + token;
-        emailSender.send(
-                request.getEmail(),
-                buildEmail(request.getFirstName(), link));
-
-        return token;
+    public void saveConfirmationToken(ChangePasswordToken token) {
+        changePasswordTokenRepository.save(token);
     }
 
-    @Transactional
-    public String confirmToken(String token) {
-        ConfirmationToken confirmationToken = confirmationTokenService
-                .getToken(token)
+    public Optional<ChangePasswordToken> getToken(String token) {
+        return changePasswordTokenRepository.findByToken(token);
+    }
+
+    public int setConfirmedAt(String token) {
+        return changePasswordTokenRepository.updateConfirmedAt(
+                token, LocalDateTime.now());
+    }
+
+    public int setNewPassword(String token, String password) throws Exception {
+        ChangePasswordToken confirmationToken = changePasswordTokenRepository.findByToken(token).orElse(null);
+        if (confirmationToken != null) {
+            confirmationToken.getAppUser().setPassword(passwordEncoder.bCryptPasswordEncoder().encode(password));
+            appUserRepository.save(confirmationToken.getAppUser());
+        }
+
+        return 0;
+    }
+
+    public void changePassword(String email) {
+        AppUser appUser = appUserRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new IllegalStateException("token not found"));
+                        new UsernameNotFoundException(
+                                String.format(USER_NOT_FOUND_MSG, email)));
 
-        if (confirmationToken.getConfirmedAt() != null) {
-            throw new IllegalStateException("email already confirmed");
-        }
+        String token = UUID.randomUUID().toString();
 
-        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
-        if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("token expired");
-        }
+        ChangePasswordToken changePasswordToken = new ChangePasswordToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                appUser
+        );
 
-        confirmationTokenService.setConfirmedAt(token);
-        appUserService.enableAppUser(
-                confirmationToken.getAppUser().getEmail());
-        return "confirmed";
+        emailSender.send(
+                email,
+                buildEmail(token, "link"));
+
+        saveConfirmationToken(changePasswordToken);
     }
 
     private String buildEmail(String name, String link) {
@@ -127,7 +127,7 @@ public class RegistrationService {
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
                 "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Input this token to change your password " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
                 "        \n" +
                 "      </td>\n" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
