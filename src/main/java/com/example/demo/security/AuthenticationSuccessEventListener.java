@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.service.AppUserAuthenticationLogService;
 import com.example.demo.service.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
@@ -14,14 +15,17 @@ public class AuthenticationSuccessEventListener implements ApplicationListener<A
 
     private final HttpServletRequest request;
     private final LoginAttemptService loginAttemptService;
+    private final AppUserAuthenticationLogService authenticationLogService;
 
     @Override
     public void onApplicationEvent(final AuthenticationSuccessEvent e) {
         final String xfHeader = request.getHeader("X-Forwarded-For");
+        String appUserName = e.getAuthentication().getName();
         if (xfHeader == null) {
             loginAttemptService.loginSucceeded(request.getRemoteAddr());
         } else {
             loginAttemptService.loginSucceeded(xfHeader.split(",")[0]);
         }
+        authenticationLogService.saveAttempt(appUserName, true);
     }
 }

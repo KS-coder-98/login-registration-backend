@@ -12,8 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Entity
-public class ChangePasswordToken extends BasicToken {
-
+public class ChangePasswordToken {
     @SequenceGenerator(
             name = "change_password_token_sequence",
             sequenceName = "change_password_token_sequence",
@@ -25,11 +24,29 @@ public class ChangePasswordToken extends BasicToken {
             generator = "change_password_token_sequence"
     )
     private Long id;
+    @Column(nullable = false)
+    private String token;
 
-    public ChangePasswordToken(String token,
-                               LocalDateTime createdAt,
-                               LocalDateTime expiresAt,
-                               AppUser appUser) {
-        super(token, createdAt, expiresAt, appUser);
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime expiresAt;
+
+    private LocalDateTime confirmedAt;
+
+    @ManyToOne
+    @JoinColumn(
+            nullable = false,
+            name = "app_user_id"
+    )
+    private AppUser appUser;
+
+    public ChangePasswordToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, AppUser appUser) {
+        this.token = token;
+        this.createdAt = createdAt;
+        this.expiresAt = expiresAt;
+        this.appUser = appUser;
     }
+
 }
