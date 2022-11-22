@@ -21,7 +21,6 @@ public class UserController {
     public ResponseEntity<String> register(@RequestBody RegistrationRequestDto request) {
         registrationService.register(request);
         return ResponseEntity.ok("Success, check email");
-
     }
 
     @GetMapping(path = "confirm")
