@@ -1,4 +1,4 @@
-package com.example.demo.security.Jwt;
+package com.example.demo.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UsernameAndPasswordAuthenticationRequest {
+public class UsernameAndPasswordAuthenticationRequestDto {
 
     private String username;
     private String password;
