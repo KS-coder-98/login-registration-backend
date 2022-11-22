@@ -1,6 +1,6 @@
-package com.example.demo.registration.token;
+package com.example.demo.model.token;
 
-import com.example.demo.appuser.AppUser;
+import com.example.demo.model.appuser.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,18 +12,10 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Entity
-public class ChangePasswordToken {
+public abstract class BasicToken {
 
-    @SequenceGenerator(
-            name = "change_password_token_sequence",
-            sequenceName = "change_password_token_sequence",
-            allocationSize = 1
-    )
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "change_password_token_sequence"
-    )
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
@@ -44,7 +36,7 @@ public class ChangePasswordToken {
     )
     private AppUser appUser;
 
-    public ChangePasswordToken(String token,
+    public BasicToken(String token,
                              LocalDateTime createdAt,
                              LocalDateTime expiresAt,
                              AppUser appUser) {

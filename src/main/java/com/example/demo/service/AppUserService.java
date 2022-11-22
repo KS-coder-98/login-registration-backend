@@ -1,10 +1,9 @@
-package com.example.demo.appuser;
+package com.example.demo.service;
 
-import com.example.demo.registration.token.ChangePasswordToken;
-import com.example.demo.registration.token.ChangePasswordTokenService;
-import com.example.demo.registration.token.ConfirmationToken;
-import com.example.demo.registration.token.ConfirmationTokenService;
-import com.example.demo.security.LoginAttemptService;
+import com.example.demo.model.appuser.AppUser;
+import com.example.demo.model.token.ConfirmationToken;
+import com.example.demo.repository.AppUserRepository;
+import com.example.demo.service.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

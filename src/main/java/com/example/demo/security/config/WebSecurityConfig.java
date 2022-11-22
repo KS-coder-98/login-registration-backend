@@ -1,6 +1,6 @@
 package com.example.demo.security.config;
 
-import com.example.demo.appuser.AppUserService;
+import com.example.demo.service.AppUserService;
 import com.example.demo.security.Jwt.JwtConfig;
 import com.example.demo.security.Jwt.JwtTokenVerifier;
 import com.example.demo.security.Jwt.JwtUsernameAndPasswordAuthenticationFilter;
@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
             "/api/v1/user/register",
             "/api/v1/user/change/password",
-            "/api/v1/user/changePassword",
+            "/api/v1/user/setNewPassword",
             "/api/v1/user/confirm",
 
             // -- Swagger UI v2
