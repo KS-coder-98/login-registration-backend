@@ -45,9 +45,9 @@ public class UserController {
     }
 
     @PostMapping(path = "setNewPassword")
-    public ResponseEntity<String> setNewPassword(@RequestBody ChangePasswordDto token) {
+    public ResponseEntity<String> setNewPassword(@RequestBody ChangePasswordDto passwordDto) {
         try {
-            String msg = changePasswordTokenService.setNewPassword(token.getToken(), token.getNewPassword());
+            String msg = changePasswordTokenService.setNewPassword(passwordDto.getToken(), passwordDto.getNewPassword());
             return ResponseEntity.ok(msg);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("failed to change password");

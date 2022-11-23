@@ -6,6 +6,7 @@ import com.example.demo.email.EmailSender;
 import com.example.demo.model.token.ChangePasswordToken;
 import com.example.demo.repository.token.ChangePasswordTokenRepository;
 import com.example.demo.security.PasswordEncoder;
+import com.example.demo.service.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,14 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class ChangePasswordTokenService {
-    private final static String USER_NOT_FOUND_MSG =
-            "user with email %s not found";
+
+    private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
 
     private final ChangePasswordTokenRepository changePasswordTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final AppUserRepository appUserRepository;
     private final EmailSender emailSender;
+    private final AppUserService appUserService;
 
 
 
@@ -43,12 +45,20 @@ public class ChangePasswordTokenService {
     public String setNewPassword(String token, String password) {
         ChangePasswordToken confirmationToken = changePasswordTokenRepository.findByToken(token).orElse(null);
         if (confirmationToken != null && confirmationToken.getConfirmedAt() == null) {
-            confirmationToken.getAppUser().setPassword(passwordEncoder.bCryptPasswordEncoder().encode(password));
+            AppUser appUserChangingPassword = confirmationToken.getAppUser();
+            String hashFromPassword = String.valueOf(password.hashCode());
+            boolean passwordAlreadyUsed = appUserService.addPasswordToHistory(appUserChangingPassword, hashFromPassword);
+            if ( !passwordAlreadyUsed ){
+                return "Password already used";
+            }
+            String encodePassword = passwordEncoder.bCryptPasswordEncoder().encode(password);
+
+            confirmationToken.getAppUser().setPassword(encodePassword);
             setConfirmedAt(token);
             appUserRepository.save(confirmationToken.getAppUser());
             return "Success";
         }
-        return "Wrong token or already used";
+        return "Wrong token or token already used";
     }
 
     public void changePassword(String email) {
