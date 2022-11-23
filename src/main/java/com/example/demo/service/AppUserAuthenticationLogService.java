@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +24,15 @@ public class AppUserAuthenticationLogService {
         if (appUserOptional.isPresent()) {
             AppUserAuthenticationLog appUserAuthenticationLog = new AppUserAuthenticationLog(isSuccess, LocalDateTime.now(), appUserOptional.get());
             authenticationLogRepository.save(appUserAuthenticationLog);
+        }
+    }
+
+    public List<AppUserAuthenticationLog> getAttempt(String appUserEmail) {
+        Optional<AppUser> byEmail = appUserRepository.findByEmail(appUserEmail);
+        if (byEmail.isPresent()) {
+            return authenticationLogRepository.findAllByAppUser(byEmail.get());
+        } else {
+            return Collections.emptyList();
         }
     }
 }
