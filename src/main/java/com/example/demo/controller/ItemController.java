@@ -1,10 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ItemDto;
+import com.example.demo.model.item.Item;
 import com.example.demo.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/item")
@@ -26,5 +29,12 @@ public class ItemController {
     @GetMapping(path = "bar_code")
     public ResponseEntity<ItemDto> getItem(@RequestParam String barCode) {
         return ResponseEntity.ok(itemService.getItemDtoByBarCode(barCode));
+    }
+
+    @GetMapping(path = "all", params = {"page", "size"})
+    public ResponseEntity<List<Item>> getItems(@RequestParam("page") int page,
+                                               @RequestParam("size") int size) {
+        return ResponseEntity.ok(itemService.getAllItems());
+        //todo need work its fake
     }
 }

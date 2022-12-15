@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ItemService {
@@ -35,5 +37,9 @@ public class ItemService {
     public ItemDto getItemDtoByBarCode(String barCode) {
         return itemMapper.map(itemRepository.findByBarCodeNumber(barCode)
                 .orElseThrow(() -> new NotFoundException("Not found item with id: " + barCode)));
+    }
+
+    public List<Item> getAllItems(){
+        return itemRepository.findAll();
     }
 }
