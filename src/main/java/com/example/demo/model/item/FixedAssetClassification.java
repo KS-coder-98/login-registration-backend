@@ -3,6 +3,10 @@ package com.example.demo.model.item;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 @AllArgsConstructor
 @Getter
 public enum FixedAssetClassification {
@@ -20,4 +24,10 @@ public enum FixedAssetClassification {
 
 
     private String description;
+
+    public static Map<String, String> getAll(){
+        Map<String, String> result = new HashMap<>();
+        Arrays.stream(FixedAssetClassification.values()).forEach (e -> result.put(e.name(), e.getDescription()));
+        return result;
+    }
 }

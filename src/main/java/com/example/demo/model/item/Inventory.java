@@ -45,4 +45,12 @@ public class Inventory {
             name = "user_id"
     )
     private AppUser user;
+
+    public Inventory(Item item, Boolean isOk, String description, LocalDateTime dataOfInventory, AppUser user) {
+        this.item = item;
+        this.isOk = isOk;
+        this.description = description;
+        this.dataOfInventory = dataOfInventory;
+        this.user = user;
+    }
 }

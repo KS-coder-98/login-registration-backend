@@ -29,9 +29,9 @@ public class Item {
     private Long id;
 
     private String name;
-    private LocalDateTime purchaseDate;
+    private LocalDateTime purchaseDate; //data zakupu
     private String faxNumber;
-    private Double purchasePrice;
+    private Double purchasePrice; //cena zakupu
     private Double amountOfAnnualDepreciation;
     private String description;
     private String location;

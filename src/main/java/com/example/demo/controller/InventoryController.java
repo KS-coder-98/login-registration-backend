@@ -1,18 +1,25 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.InventoryItemDto;
+import com.example.demo.service.InventoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 @RestController
-@RequestMapping(path = "api/v1/user")
+@RequestMapping(path = "api/v1/inventory")
+@RequiredArgsConstructor
 public class InventoryController {
 
-    @GetMapping(params = {"itemId", "isOk"})
-    public ResponseEntity<String> checkItem(@RequestParam("itemId") Long itemId, @RequestParam("isOk") Boolean isOk) {
-        //todo its fake
-        return null;
+    private final InventoryService inventoryService;
+
+    @PostMapping()
+    public ResponseEntity<String> checkItem(HttpServletRequest request, @RequestBody InventoryItemDto inventoryItemDto) {
+        Principal userPrincipal = request.getUserPrincipal();
+        inventoryService.checkItem(userPrincipal.getName(), inventoryItemDto);
+        return ResponseEntity.ok("Inventory successfully");
     }
 }
