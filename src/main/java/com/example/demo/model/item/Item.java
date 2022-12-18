@@ -32,7 +32,9 @@ public class Item {
     private LocalDateTime purchaseDate; //data zakupu
     private String faxNumber;
     private Double purchasePrice; //cena zakupu
-    private Double amountOfAnnualDepreciation;
+    private Double amountOfAnnualDepreciation; //kwota rocznej amortyzacji
+    @Transient
+    private Double currencyValue;
     private String description;
     private String location;
     private FixedAssetClassification classification;

@@ -14,6 +14,7 @@ public class ItemDto {
     private String faxNumber;
     private Double purchasePrice;
     private Double amountOfAnnualDepreciation;
+    private Double currencyValue;
     private String description;
     private String location;
     private FixedAssetClassification classification;

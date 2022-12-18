@@ -25,9 +25,9 @@ public class ItemController {
         return ResponseEntity.ok(itemService.saveAndReturnDto(itemDto));
     }
 
-    @GetMapping
+    @GetMapping(params = "id")
     @Operation(summary = "Get item by id")
-    public ResponseEntity<ItemDto> getItem(@RequestParam Long id) {
+    public ResponseEntity<ItemDto> getItem(@RequestParam("id") Long id) {
         return ResponseEntity.ok(itemService.getItemDtoById(id));
     }
 
