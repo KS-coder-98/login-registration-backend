@@ -42,6 +42,7 @@ public class ItemController {
     }
 
     @GetMapping(value = "barbecue", produces = MediaType.IMAGE_PNG_VALUE, params = "barcode")
+    @Operation(summary = "Generate bar code from string")
     public ResponseEntity<BufferedImage> barbecueEAN13Barcode(@RequestParam("barcode") String barcode)
             throws Exception {
         return ResponseEntity.ok (BarCodeService.generateEAN13BarcodeImage(barcode) );
