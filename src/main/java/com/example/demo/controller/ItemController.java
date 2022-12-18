@@ -1,14 +1,18 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ItemDto;
+import com.example.demo.dto.ItemDtoPageable;
 import com.example.demo.model.item.FixedAssetClassification;
-import com.example.demo.model.item.Item;
+import com.example.demo.service.BarCodeService;
 import com.example.demo.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 
@@ -37,11 +41,21 @@ public class ItemController {
         return ResponseEntity.ok(itemService.getItemDtoByBarCode(barCode));
     }
 
+    @GetMapping(value = "barbecue", produces = MediaType.IMAGE_PNG_VALUE, params = "barcode")
+    public ResponseEntity<BufferedImage> barbecueEAN13Barcode(@RequestParam("barcode") String barcode)
+            throws Exception {
+        return ResponseEntity.ok (BarCodeService.generateEAN13BarcodeImage(barcode) );
+    }
+
     @GetMapping(path = "all", params = {"page", "size"})
-    public ResponseEntity<List<Item>> getItems(@RequestParam("page") int page,
-                                               @RequestParam("size") int size) {
-        return ResponseEntity.ok(itemService.getAllItems());
-        //todo need work its fake
+    @Operation(summary = "Get all items - pagination")
+    public ResponseEntity<ItemDtoPageable> getItems(
+            @Parameter(description = "Number of page") @RequestParam(value = "page", defaultValue = "0") int page,
+            @Parameter(description = "Size of page") @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<ItemDto> itemsDtoPageableItems = itemService.getItemsDtoPageableItems(size, page);
+        Long countItems = itemService.countItems();
+        ItemDtoPageable itemDtoPageable = new ItemDtoPageable(itemsDtoPageableItems, countItems);
+        return ResponseEntity.ok(itemDtoPageable);
     }
 
 

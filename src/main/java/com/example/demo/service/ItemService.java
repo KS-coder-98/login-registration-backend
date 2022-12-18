@@ -5,10 +5,14 @@ import com.example.demo.mapper.ItemMapper;
 import com.example.demo.model.item.Item;
 import com.example.demo.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import javax.persistence.Transient;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +25,16 @@ public class ItemService {
         return itemRepository.save(itemMapper.map(itemDto));
     }
 
+    @Transient
     public ItemDto saveAndReturnDto(ItemDto itemDto) {
+        List<String> allBarCode = itemRepository.getAllBarCode();
+        String randomBarCode;
+        do {
+            Random random = new Random();
+            randomBarCode = String.valueOf(random.ints(10000000, 99999999)
+                    .findFirst().getAsInt());
+        } while (allBarCode.contains(randomBarCode));
+        itemDto.setBarCodeNumber(randomBarCode);
         return itemMapper.map(save(itemDto));
     }
 
@@ -39,7 +52,21 @@ public class ItemService {
                 .orElseThrow(() -> new NotFoundException("Not found item with id: " + barCode)));
     }
 
-    public List<Item> getAllItems(){
+    public List<Item> getAllItems() {
         return itemRepository.findAll();
+    }
+
+    public List<Item> getItemsPageableItems(int size, int page) {
+        return itemRepository.findAll(PageRequest.of(page, size))
+                .stream().collect(Collectors.toList());
+    }
+
+    public List<ItemDto> getItemsDtoPageableItems(int size, int page) {
+        List<Item> itemsPageableItems = getItemsPageableItems(size, page);
+        return itemMapper.mapToList(itemsPageableItems);
+    }
+
+    public Long countItems() {
+        return itemRepository.count();
     }
 }

@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
@@ -14,6 +15,8 @@ public interface ItemMapper {
     Item map(ItemDto itemDto);
 
     ItemDto map(Item item);
+
+    List<ItemDto> mapToList(List<Item> itemList);
 
     @BeforeMapping
     default void calcCurrentValue(Item item) {
