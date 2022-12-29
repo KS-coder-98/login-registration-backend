@@ -31,7 +31,7 @@ public class ItemService {
         String randomBarCode;
         do {
             Random random = new Random();
-            randomBarCode = String.valueOf(random.ints(10000000, 99999999)
+            randomBarCode = String.valueOf(random.ints(1000000, 9999999)
                     .findFirst().getAsInt());
         } while (allBarCode.contains(randomBarCode));
         itemDto.setBarCodeNumber(randomBarCode);
