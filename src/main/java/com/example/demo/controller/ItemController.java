@@ -45,7 +45,7 @@ public class ItemController {
     @Operation(summary = "Generate bar code from string")
     public ResponseEntity<BufferedImage> barbecueEAN13Barcode(@RequestParam("barcode") String barcode)
             throws Exception {
-        return ResponseEntity.ok (BarCodeService.generateEAN13BarcodeImage(barcode) );
+        return ResponseEntity.ok(BarCodeService.generateEAN13BarcodeImage(barcode));
     }
 
     @GetMapping(path = "all", params = {"page", "size"})
@@ -65,5 +65,13 @@ public class ItemController {
             description = "Use this, for example, when you want to create a new object and in the form you will have to choose an enum")
     public ResponseEntity<Map<String, String>> getClassifications() {
         return ResponseEntity.ok().body(FixedAssetClassification.getAll());
+    }
+
+    @PatchMapping(path = "update/{id}")
+    @Operation(summary = "Update item",
+            description = "In path put item id. Into the body of the method enter only the values that are to be updated, the rest will be omitted ")
+    public ResponseEntity<ItemDto> updateItem(@PathVariable Long id, @RequestBody ItemDto itemDto) {
+        ItemDto updatedItem = itemService.updateItem(id, itemDto);
+        return ResponseEntity.ok(updatedItem);
     }
 }

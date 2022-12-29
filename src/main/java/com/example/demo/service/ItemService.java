@@ -69,4 +69,11 @@ public class ItemService {
     public Long countItems() {
         return itemRepository.count();
     }
+
+    public ItemDto updateItem(Long id, ItemDto itemDto) {
+        Item item = itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found item with id: " + id));
+        ItemDto map = itemMapper.map(item);
+        itemMapper.updateItem(itemDto, map);
+        return itemMapper.map(itemRepository.save(itemMapper.map(map)));
+    }
 }
