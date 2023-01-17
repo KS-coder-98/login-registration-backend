@@ -52,8 +52,9 @@ public class ItemController {
     @Operation(summary = "Get all items - pagination")
     public ResponseEntity<ItemDtoPageable> getItems(
             @Parameter(description = "Number of page") @RequestParam(value = "page", defaultValue = "0") int page,
-            @Parameter(description = "Size of page") @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<ItemDto> itemsDtoPageableItems = itemService.getItemsDtoPageableItems(size, page);
+            @Parameter(description = "Size of page") @RequestParam(value = "size", defaultValue = "10") int size,
+            @Parameter(description = "Sorting criteria") @RequestParam(value = "sort", defaultValue = "name") String sort) {
+        List<ItemDto> itemsDtoPageableItems = itemService.getItemsDtoPageableItems(size, page, sort);
         Long countItems = itemService.countItems();
         ItemDtoPageable itemDtoPageable = new ItemDtoPageable(itemsDtoPageableItems, countItems);
         return ResponseEntity.ok(itemDtoPageable);

@@ -6,6 +6,8 @@ import com.example.demo.model.item.Item;
 import com.example.demo.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -56,13 +58,13 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
-    public List<Item> getItemsPageableItems(int size, int page) {
-        return itemRepository.findAll(PageRequest.of(page, size))
-                .stream().collect(Collectors.toList());
+    public List<Item> getItemsPageableItems(int size, int page, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return itemRepository.findAll(pageable).getContent();
     }
 
-    public List<ItemDto> getItemsDtoPageableItems(int size, int page) {
-        List<Item> itemsPageableItems = getItemsPageableItems(size, page);
+    public List<ItemDto> getItemsDtoPageableItems(int size, int page, String sort) {
+        List<Item> itemsPageableItems = getItemsPageableItems(size, page, sort);
         return itemMapper.mapToList(itemsPageableItems);
     }
 
